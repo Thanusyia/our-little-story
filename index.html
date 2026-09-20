@@ -40,30 +40,78 @@ h1,h2{font-family:Georgia,serif;color:var(--pink)}h1{font-size:clamp(42px,10vw,8
 <div class="count" id="count"></div>
 <button id="sound" class="sound" onclick="toggleSound()" aria-label="Toggle music">🔊</button><div class="nav" id="nav"><button id="prev" onclick="move(-1)">← Previous</button><button id="next" onclick="move(1)">Next ❤️ →</button></div>
 <script>
-const pages=[...document.querySelectorAll('.page')];let current=0;const music=document.getElementById('music');
-function show(n){pages[current].classList.remove('active');pages[current].querySelectorAll('video').forEach(v=>v.pause());current=Math.max(0,Math.min(pages.length-1,n));pages[current].classList.add('active');document.getElementById('count').textContent=(current+1)+' / '+pages.length;document.getElementById('prev').disabled=current===0;document.getElementById('next').disabled=current===pages.length-1;pages[current].scrollTop=0}
-function move(d){if(current===0&&d>0){beginStory();return}show(current+d)}
+const pages=[...document.querySelectorAll('.page')];
+let current=0;
+const music=document.getElementById('music');
+const videos=[...document.querySelectorAll('video')];
+let resumeMusicAfterVideo=false;
+
+function show(n){
+  pages[current].classList.remove('active');
+  pages[current].querySelectorAll('video').forEach(v=>v.pause());
+  current=Math.max(0,Math.min(pages.length-1,n));
+  pages[current].classList.add('active');
+  document.getElementById('count').textContent=(current+1)+' / '+pages.length;
+  document.getElementById('prev').disabled=current===0;
+  document.getElementById('next').disabled=current===pages.length-1;
+  pages[current].scrollTop=0;
+}
+function move(d){
+  if(current===0&&d>0){beginStory();return}
+  show(current+d);
+}
 function beginStory(){
   document.getElementById('nav').classList.remove('hidden');
   music.volume=.35;
   music.muted=false;
   music.currentTime=0;
-  music.play().then(()=>{music.pause();music.currentTime=0;}).catch(()=>{});
+  music.play().catch(()=>{document.getElementById('sound').textContent='▶️'});
+  document.getElementById('sound').textContent='🔊';
   show(1);
-  const firstVideo=pages[1].querySelector('video');
-  if(firstVideo){
-    firstVideo.addEventListener('play',()=>{music.pause();music.currentTime=0;},{once:true});
-    firstVideo.addEventListener('ended',()=>{
-      music.currentTime=0;
-      music.muted=false;
-      document.getElementById('sound').textContent='🔊';
-      music.play().catch(()=>{document.getElementById('sound').textContent='▶️';});
-    },{once:true});
-  }
 }
-function toggleSound(){if(music.paused){music.muted=false;music.play().catch(()=>{});document.getElementById('sound').textContent='🔊';return}music.muted=!music.muted;document.getElementById('sound').textContent=music.muted?'🔇':'🔊'}
-music.addEventListener('ended',()=>{music.currentTime=0;music.play().catch(()=>{})});document.getElementById('prev').disabled=true;document.getElementById('nav').classList.add('hidden');document.getElementById('count').textContent='1 / '+pages.length;
-let sx=0;document.addEventListener('touchstart',e=>sx=e.changedTouches[0].screenX,{passive:true});document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].screenX-sx;if(Math.abs(dx)>70)move(dx<0?1:-1)},{passive:true});
-setInterval(()=>{const h=document.createElement('div');h.className='heart';h.textContent=Math.random()>.3?'❤️':'♡';h.style.left=Math.random()*95+'vw';h.style.fontSize=(12+Math.random()*18)+'px';h.style.animationDuration=(5+Math.random()*4)+'s';document.body.appendChild(h);setTimeout(()=>h.remove(),9000)},900);
+videos.forEach(video=>{
+  video.addEventListener('play',()=>{
+    resumeMusicAfterVideo=!music.paused && !music.muted;
+    if(resumeMusicAfterVideo) music.pause();
+  });
+  const resume=()=>{
+    if(resumeMusicAfterVideo){
+      music.play().catch(()=>{document.getElementById('sound').textContent='▶️'});
+      resumeMusicAfterVideo=false;
+    }
+  };
+  video.addEventListener('pause',resume);
+  video.addEventListener('ended',resume);
+});
+function toggleSound(){
+  if(music.paused){
+    music.muted=false;
+    music.play().catch(()=>{});
+    document.getElementById('sound').textContent='🔊';
+    return;
+  }
+  music.muted=!music.muted;
+  document.getElementById('sound').textContent=music.muted?'🔇':'🔊';
+}
+music.addEventListener('ended',()=>{
+  music.currentTime=0;
+  music.play().catch(()=>{});
+});
+document.getElementById('prev').disabled=true;
+document.getElementById('nav').classList.add('hidden');
+document.getElementById('count').textContent='1 / '+pages.length;
+let sx=0;
+document.addEventListener('touchstart',e=>sx=e.changedTouches[0].screenX,{passive:true});
+document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].screenX-sx;if(Math.abs(dx)>70)move(dx<0?1:-1)},{passive:true});
+setInterval(()=>{
+  const h=document.createElement('div');
+  h.className='heart';
+  h.textContent=Math.random()>.3?'❤️':'♡';
+  h.style.left=Math.random()*95+'vw';
+  h.style.fontSize=(12+Math.random()*18)+'px';
+  h.style.animationDuration=(5+Math.random()*4)+'s';
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),9000);
+},900);
 </script>
 </body></html>
