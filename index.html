@@ -23,7 +23,7 @@ h1,h2{font-family:Georgia,serif;color:var(--pink)}h1{font-size:clamp(42px,10vw,8
 </style>
 </head>
 <body>
-<audio id="music" preload="auto" src="Uyirey%20-%20Lyrical%20%20Amaran%20%20Sivakarthikeyan,%20Sai%20Pallavi%20%20GV%20Prakash%20%20Rajkumar%20%20Kamal%20Haasan.mp3"></audio>
+<audio id="music" preload="auto" src="Uyirey%20-%20Lyrical%20%20Amaran%20%20Sivakarthikeyan,%20Sai%20Pallavi%20%20GV%20Prakash%20%20Rajkumar%20%20Kamal%20Haasan-%5BAudioTrimmer.com%5D%20(1).mp3"></audio>
 <div class="story">
 <section class="page active"><div class="wrap"><div class="small">1 October • 28th Birthday</div><h1>Happy Birthday, Kunju ❤️</h1><p>A little piece of us, made just for you.</p><p>— Butty ❤️</p><button class="begin" onclick="beginStory()">Tap to Begin ❤️</button><p class="small">Turn your sound on 🎵</p></div></section>
 <section class="page"><div class="card"><h2>Where It All Started 🎥</h2><video class="media" controls playsinline src="WhatsApp%20Video%202026-09-19%20at%201.23.02%20PM.mp4"></video><p>I received it from Prasath, and there you were… singing about me. I lost count of how many times I watched it. One unexpected moment, and somehow it became the beginning of us. 🥹❤️</p></div></section>
@@ -43,8 +43,8 @@ h1,h2{font-family:Georgia,serif;color:var(--pink)}h1{font-size:clamp(42px,10vw,8
 const pages=[...document.querySelectorAll('.page')];let current=0;const music=document.getElementById('music');
 function show(n){pages[current].classList.remove('active');pages[current].querySelectorAll('video').forEach(v=>v.pause());current=Math.max(0,Math.min(pages.length-1,n));pages[current].classList.add('active');document.getElementById('count').textContent=(current+1)+' / '+pages.length;document.getElementById('prev').disabled=current===0;document.getElementById('next').disabled=current===pages.length-1;pages[current].scrollTop=0}
 function move(d){show(current+d)}
-function beginStory(){show(1);setTimeout(()=>{music.volume=.35;music.currentTime=5;music.play().catch(()=>{})},3000)}
-music.addEventListener('ended',()=>{music.currentTime=5;music.play().catch(()=>{})});document.getElementById('prev').disabled=true;
+function beginStory(){show(1);setTimeout(()=>{music.volume=.35;music.currentTime=0;music.play().catch(()=>{})},3000)}
+music.addEventListener('ended',()=>{music.currentTime=0;music.play().catch(()=>{})});document.getElementById('prev').disabled=true;
 let sx=0;document.addEventListener('touchstart',e=>sx=e.changedTouches[0].screenX,{passive:true});document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].screenX-sx;if(Math.abs(dx)>70)move(dx<0?1:-1)},{passive:true});
 setInterval(()=>{const h=document.createElement('div');h.className='heart';h.textContent=Math.random()>.3?'❤️':'♡';h.style.left=Math.random()*95+'vw';h.style.fontSize=(12+Math.random()*18)+'px';h.style.animationDuration=(5+Math.random()*4)+'s';document.body.appendChild(h);setTimeout(()=>h.remove(),9000)},900);
 </script>
