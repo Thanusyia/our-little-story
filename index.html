@@ -45,12 +45,17 @@ function show(n){pages[current].classList.remove('active');pages[current].queryS
 function move(d){if(current===0&&d>0){beginStory();return}show(current+d)}
 function beginStory(){
   document.getElementById('nav').classList.remove('hidden');
+  music.volume=.35;
+  music.muted=true;
+  music.currentTime=0;
+  music.play().then(()=>music.pause()).catch(()=>{});
   show(1);
   const firstVideo=pages[1].querySelector('video');
   if(firstVideo){
     firstVideo.addEventListener('ended',()=>{
-      music.volume=.35;
       music.currentTime=0;
+      music.muted=false;
+      document.getElementById('sound').textContent='🔊';
       music.play().catch(()=>{});
     },{once:true});
   }
